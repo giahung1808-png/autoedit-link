@@ -4,24 +4,51 @@
 <meta charset="utf-8">
 <title>AutoEdit Pro — vào app</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- LINK_HIEN_TAI --><meta http-equiv="refresh" content="1;url=https://isbn-guaranteed-bit-exclusive.trycloudflare.com">
 <style>
   body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
        background:#0f1420;color:#eee;font-family:system-ui,Segoe UI,Arial}
-  .box{text-align:center;padding:24px}
+  .box{text-align:center;padding:24px;max-width:420px}
   .logo{font-size:44px}
-  a{color:#ffd54a;font-size:20px;font-weight:700;text-decoration:none}
-  .hint{color:#8b93a7;margin-top:14px;font-size:14px;line-height:1.6}
+  a{color:#ffd54a;font-size:19px;font-weight:700;text-decoration:none;word-break:break-all}
+  .hint{color:#8b93a7;margin-top:16px;font-size:14px;line-height:1.7}
+  .err{color:#ff8a80}
 </style>
 </head>
 <body>
 <div class="box">
   <div class="logo">🎬</div>
   <h2>AutoEdit Pro</h2>
-  <p>Đang đưa anh vào app...</p>
-  <p><a id="lk" href="https://isbn-guaranteed-bit-exclusive.trycloudflare.com">Bấm vào đây nếu không tự nhảy</a></p>
-  <p class="hint">Trang này luôn giữ link mới nhất.<br>
-     Link không vào được nghĩa là máy ở nhà đang tắt app.</p>
+  <p id="tt">Đang tìm link mới nhất...</p>
+  <p id="lk"></p>
+  <p class="hint" id="ht"></p>
 </div>
+<script>
+/* KHÔNG nhét link thẳng vào trang này.
+   GitHub Pages nhớ đệm trang HTML 600 giây (Cache-Control: max-age=600).
+   Đường hầm miễn phí thì chết sau vài phút. Nhét link vào HTML nghĩa là
+   trang gần như LUÔN trỏ vào link đã chết — đúng lỗi anh Tú gặp.
+   Nên đọc link từ link.txt kèm một con số ngẫu nhiên: máy chủ nhớ đệm coi
+   mỗi địa chỉ khác nhau là một tệp khác, nên luôn lấy bản mới nhất. */
+(function () {
+  var tt = document.getElementById('tt'),
+      lk = document.getElementById('lk'),
+      ht = document.getElementById('ht');
+  fetch('link.txt?t=' + Date.now() + '-' + Math.random(), { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw 0; return r.text(); })
+    .then(function (t) {
+      var u = (t.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/) || [])[0];
+      if (!u) throw 0;
+      tt.textContent = 'Đang đưa anh vào app...';
+      lk.innerHTML = '<a href="' + u + '">' + u + '</a>';
+      ht.innerHTML = 'Không tự nhảy thì bấm vào dòng trên.';
+      setTimeout(function () { location.replace(u); }, 700);
+    })
+    .catch(function () {
+      tt.innerHTML = '<span class="err">Chưa lấy được link.</span>';
+      ht.innerHTML = 'Máy ở nhà đang tắt app, hoặc đường hầm đang bật lại.<br>' +
+                     'Anh chờ khoảng một phút rồi tải lại trang này.';
+    });
+})();
+</script>
 </body>
 </html>
